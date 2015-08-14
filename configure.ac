@@ -13,8 +13,14 @@ AC_ARG_ENABLE([example],
                 [enable example encoding program (default is no)])],
             [example=$enableval], [example=no])
 
+AC_ARG_ENABLE([encode],
+            [AS_HELP_STRING([--enable-encode],
+                [enable encoding (default is no)])],
+            [encode=$enableval], [encode=no])
+
 dnl Automake conditionals to set
 AM_CONDITIONAL(EXAMPLE, test x$example = xyes)
+AM_CONDITIONAL(ENCODE, test x$encode = xyes)
 
 dnl Checks for programs.
 AC_PROG_CC

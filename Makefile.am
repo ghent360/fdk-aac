@@ -1,16 +1,28 @@
 ACLOCAL_AMFLAGS = -I m4
 AUTOMAKE_OPTIONS = subdir-objects
 
-AM_CPPFLAGS = \
-    -I$(top_srcdir)/libAACdec/include \
-    -I$(top_srcdir)/libAACenc/include \
-    -I$(top_srcdir)/libSBRdec/include \
-    -I$(top_srcdir)/libSBRenc/include \
-    -I$(top_srcdir)/libMpegTPDec/include \
-    -I$(top_srcdir)/libMpegTPEnc/include \
+COMMON_CPPFLAGS = \
     -I$(top_srcdir)/libSYS/include \
     -I$(top_srcdir)/libFDK/include \
     -I$(top_srcdir)/libPCMutils/include
+
+ENC_CPPFLAGS = \
+    -I$(top_srcdir)/libAACenc/include \
+    -I$(top_srcdir)/libSBRenc/include \
+    -I$(top_srcdir)/libMpegTPEnc/include
+
+DEC_CPPFLAGS = \
+    -I$(top_srcdir)/libAACdec/include \
+    -I$(top_srcdir)/libSBRdec/include \
+    -I$(top_srcdir)/libMpegTPDec/include 
+
+AM_CPPFLAGS = \
+    $(COMMON_CPPFLAGS) \
+    $(DEC_CPPFLAGS)
+
+if ENCODE
+AM_CPPFLAGS += $(ENC_FLAGS)
+endif
 
 AM_CXXFLAGS = -fno-exceptions -fno-rtti
 libfdk_aac_la_LINK = $(LINK) $(libfdk_aac_la_LDFLAGS)
@@ -18,12 +30,16 @@ libfdk_aac_la_LINK = $(LINK) $(libfdk_aac_la_LDFLAGS)
 nodist_EXTRA_libfdk_aac_la_SOURCES = dummy.c
 
 fdk_aacincludedir = $(includedir)/fdk-aac
+
 fdk_aacinclude_HEADERS = \
     $(top_srcdir)/libSYS/include/machine_type.h \
     $(top_srcdir)/libSYS/include/genericStds.h \
     $(top_srcdir)/libSYS/include/FDK_audio.h \
-    $(top_srcdir)/libAACenc/include/aacenc_lib.h \
     $(top_srcdir)/libAACdec/include/aacdecoder_lib.h
+
+if ENCODE
+fdk_aacinclude_HEADERS += $(top_srcdir)/libAACenc/include/aacenc_lib.h
+endif
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = fdk-aac.pc
@@ -179,10 +195,17 @@ SYS_SRC = \
     libSYS/src/wav_file.cpp
 
 libfdk_aac_la_SOURCES = \
-    $(AACDEC_SRC) $(AACENC_SRC) \
-    $(MPEGTPDEC_SRC) $(MPEGTPENC_SRC) \
-    $(SBRDEC_SRC) $(SBRENC_SRC) \
+    $(AACDEC_SRC) \
+    $(MPEGTPDEC_SRC) \
+    $(SBRDEC_SRC) \
     $(PCMUTILS_SRC) $(FDK_SRC) $(SYS_SRC)
+
+if ENCODE
+libfdk_aac_la_SOURCES += \
+    $(SBRENC_SRC) \
+    $(AACENC_SRC) \
+    $(MPEGTPENC_SRC)
+endif
 
 EXTRA_DIST = \
     $(top_srcdir)/autogen.sh \
@@ -192,9 +215,6 @@ EXTRA_DIST = \
     $(top_srcdir)/documentation/*.pdf \
     $(top_srcdir)/libAACdec/src/*.h \
     $(top_srcdir)/libAACdec/src/arm/*.cpp \
-    $(top_srcdir)/libAACenc/src/*.h \
-    $(top_srcdir)/libSBRenc/src/*.h \
-    $(top_srcdir)/libSBRenc/include/*.h \
     $(top_srcdir)/libSBRdec/src/*.h \
     $(top_srcdir)/libSBRdec/src/arm/*.cpp \
     $(top_srcdir)/libSBRdec/include/*.h \
@@ -202,9 +222,6 @@ EXTRA_DIST = \
     $(top_srcdir)/libSYS/src/linux/*.cpp \
     $(top_srcdir)/libSYS/src/mips/*.cpp \
     $(top_srcdir)/libPCMutils/include/*.h \
-    $(top_srcdir)/libMpegTPEnc/include/*.h \
-    $(top_srcdir)/libMpegTPEnc/src/*.h \
-    $(top_srcdir)/libMpegTPEnc/src/version \
     $(top_srcdir)/libMpegTPDec/include/*.h \
     $(top_srcdir)/libMpegTPDec/src/*.h \
     $(top_srcdir)/libMpegTPDec/src/version \
@@ -215,4 +232,14 @@ EXTRA_DIST = \
     $(top_srcdir)/libFDK/include/x86/*.h \
     $(top_srcdir)/libFDK/src/arm/*.cpp \
     $(top_srcdir)/libFDK/src/mips/*.cpp
+
+if ENCODE
+EXTRA_DIST += \
+    $(top_srcdir)/libAACenc/src/*.h \
+    $(top_srcdir)/libSBRenc/src/*.h \
+    $(top_srcdir)/libSBRenc/include/*.h \
+    $(top_srcdir)/libMpegTPEnc/include/*.h \
+    $(top_srcdir)/libMpegTPEnc/src/*.h \
+    $(top_srcdir)/libMpegTPEnc/src/version 
+endif
 
