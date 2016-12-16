@@ -24,7 +24,7 @@ if ENCODE
 AM_CPPFLAGS += $(ENC_FLAGS)
 endif
 
-AM_CXXFLAGS = -fno-exceptions -fno-rtti -std=c++98
+AM_CXXFLAGS = -fno-exceptions -fno-rtti
 libfdk_aac_la_LINK = $(LINK) $(libfdk_aac_la_LDFLAGS)
 # Mention a dummy pure C file to trigger generation of the $(LINK) variable
 nodist_EXTRA_libfdk_aac_la_SOURCES = dummy.c
