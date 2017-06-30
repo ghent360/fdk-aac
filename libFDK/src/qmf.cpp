@@ -791,7 +791,7 @@ qmfInverseModulationHQ( HANDLE_QMF_FILTER_BANK synQmf,  /*!< Handle of Qmf Synth
     scaleValues(&tImag[0+synQmf->lsb], &qmfImag[0+synQmf->lsb], synQmf->usb-synQmf->lsb, scaleFactorHighBand);
   }
 
-  if (synQmf->usb >= synQmf->no_channels) {
+  if (synQmf->usb > synQmf->no_channels) {
     return;
   }
 
